@@ -7,27 +7,29 @@ import { Request, Response } from "express";
 let register = async (req: Request, res: Response) => {
   try {
     const {
-      name,
-      lastName,
       email,
       password,
+      name,
+      lastName,
       phoneNumber,
-      sure
+      domicilio
     } = req.body;
-
+    
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const result = await UserRepository.add(new User( name, lastName, email, hashedPassword, phoneNumber,  sure));
+    const result = await UserRepository.add(new User(email, name, lastName, phoneNumber, hashedPassword, domicilio));   
+
     return res.status(201).send(
-      { status: 'register ok', password_hasheado: hashedPassword }
+      { status: 'register ok' }
     );
+   
   } catch (error: any) {
     if (error && error.code == "ER_DUP_ENTRY") {
-      return res.status(500).send({ errorInfo: error.sqlMessage }
-      );
+      return res.status(500).send({ errorInfo: error.sqlMessage });
+    }else{
+      return res.status(500).send({error})
     }
   }
 }
-
 
 export default register;

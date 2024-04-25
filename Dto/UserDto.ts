@@ -1,22 +1,21 @@
 class User {
+    email: string;
     name: string;
     lastName: string;
-    email: string;
-    password: string;
     phoneNumber: string;
-    sure: string;
+    password: string;
+    domicilio: string
     constructor(
-        name: string, lastName: string, 
-        email: string, password: string, 
-        phoneNumber: string, sure: string
+        email: string, name: string,
+        lastName: string, phoneNumber: string,
+        password: string,domicilio:string
     ) {
-        
+        this.email = email;
         this.name = name;
         this.lastName = lastName;
-        this.email = email;
-        this.password = password;
         this.phoneNumber = phoneNumber;
-        this.sure= sure;
+        this.password = password;
+        this.domicilio=domicilio
     }
 }
 
