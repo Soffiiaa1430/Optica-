@@ -1,38 +1,29 @@
-// authController.ts
-import UserRepository from '../repositories/UserRepository.js';
-import bcrypt from "bcryptjs";
 import { Request, Response } from "express";
+import UserService from "../services/UserServices";
+import Auth from "../Dto/UserAuthenticationDto";
+import {generateToken }from "../helpers/createToken"
 
-const auth = async (req: Request, res: Response) => {
-    
+const authController = async (req: Request, res: Response) => {
     try {
-        const { email, password }: { email: string; password: string } = req.body;
-
-        const storedPassword = await UserRepository.getUserPassword(email);
-
-        if (!storedPassword) {
-            return res.status(401).json({ 
-                status: 'Documento o contraseña incorrecta'
-            });
-        }
-
-        const isPasswordValid = await bcrypt.compare(password, storedPassword);
-        
-        if (isPasswordValid) {
-            return res.status(200).json({ 
-                status: 'Autenticación exitosa'
+        const { email, password } = req.body;
+        const login = await UserService.auth(new Auth(email, password));
+        if (login.logged) {
+          
+            return res.status(200).json({
+                status: login.status,
+                token:  await generateToken(email)
             });
         } else {
             return res.status(401).json({ 
-                status: 'Documento o contraseña incorrecta'
+                status: 'Incorrect username or password'
             });
         }
     } catch (error) {
         console.log(error);
         return res.status(500).json({ 
-            status: 'Error ocurrido al procesar la solicitud'
+            status: 'Internal server error'
         });
     }
 }
 
-export default auth;
+export default authController;

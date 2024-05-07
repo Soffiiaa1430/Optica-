@@ -1,37 +1,42 @@
 import db from '../config/config-db';
 import User from '../Dto/UserDto';
-class UserRepository {
+import gafa from '../Dto/gafasDto';
+import Auth from '../Dto/UserAuthenticationDto';
 
+class UserRepository {
     static async add(user: User){     
-        const sql = 'INSERT INTO users (email, name, lastName, phoneNumber, password, domicilio) VALUES (?, ?, ?, ?, ?, ?)';
-        const values = [user.email, user.name, user.lastName, user.phoneNumber, user.password,user.domicilio];   
+        const sql = 'INSERT INTO users ( name, lastName, email, password, sure) VALUES (?, ?, ?, ?, ?)';
+        const values = [user.name, user.lastName,user.email, user.password, user.sure ];   
         return db.execute(sql, values);
     }
 
-    static async logeo(email: string){        
+    static async logeo(auth: Auth){        
         const sql = 'SELECT * FROM users WHERE email = ?';
-        const values = [email];     
+        const values = [auth.email];     
         return db.execute(sql, values);   
     }
 
-    static async getUserPassword(email: string): Promise<string | null> {
-        try {
-            const sql = 'SELECT password FROM users WHERE email = ?';
-            const values = [email];
-            const result = await db.execute(sql, values);
-
-        if (result && result.length > 0 && Array.isArray(result[0]) && result[0].length > 0) {
-            const firstRow = result[0];
-            const user = firstRow[0];
-
-            if (user && 'password' in user) {
-                return user.password;
+    static async getAllgafas(): Promise<gafa[]> {
+        try { 
+            const sql = 'SELECT * FROM gafas ';
+            const [rows] = await db.execute(sql);
+    
+            if (!Array.isArray(rows)) {
+                throw new Error('Los datos de las gafas no son válidos');
             }
-        }
-
-        return null; 
+    
+            const gafas: gafa[] = rows.map((row: any) => {
+                return {
+                    id: row.id,
+                    modelo: row.modelo,
+                    color: row.color,
+                    precio: row.precio,
+                };
+            });
+    
+            return gafas;
         } catch (error) {
-            console.error('Error al obtener la contraseña del usuario:', error);
+            console.error('Error al obtener todas las gafas:', error);
             throw error;
         }
     }
