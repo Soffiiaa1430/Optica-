@@ -11,7 +11,7 @@ const validateToken = async (req: Request, res: Response, next: NextFunction) =>
     if (headerToken != undefined && headerToken.startsWith('Bearer ')) {
         const bearerToken = headerToken.slice(7);
 
-        await jwt.verify(bearerToken, process.env.SECRET_KEY || 'Laurappp', (err, decoden) => {
+        await jwt.verify(bearerToken, process.env.SECRET_KEY || 'soffiia', (err, decoden) => {
             if (err) {
                 if(err instanceof jwt.TokenExpiredError || err instanceof jwt.TokenExpiredError){
                     return res.status(401).json({
