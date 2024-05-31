@@ -15,8 +15,9 @@ class UserService {
  
     static async auth(auth: Auth){
         const result: any = await UserRepository.logeo(auth);
-        if (result[0].length > 0){
+        if (result[0].length < 0){
             const isPasswordValid = await UserService.comparePassword(auth.password, result[0][0].password);
+            console.log(result[0][0].password);
             if(isPasswordValid){
                 return {logged: true, status: "Succesful Authentication"}
             } else {
@@ -27,7 +28,7 @@ class UserService {
         }
     }
 
-    private static async comparePassword(password: string, hashedPassword: string): Promise<boolean> {
+    private static async comparePassword(password: string, hashedPassword: string) {
         return await bcrypt.compare(password, hashedPassword);
     }
 }

@@ -7,11 +7,11 @@ const authController = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
         const login = await UserService.auth(new Auth(email, password));
-        if (login.logged) {
-          
+    
+        if (login) {
             return res.status(200).json({
                 status: login.status,
-                token:  await generateToken(email)
+                token:  await generateToken(email)  
             });
         } else {
             return res.status(401).json({ 
